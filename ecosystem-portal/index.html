@@ -201,10 +201,14 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
                         Structural Classification Matrix Profile
                     </h3>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs">
                             <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Extracted Category</span>
                             <span id="extCategory" class="text-xs font-bold text-slate-800 block mt-1">Structural Infrastructure Fault</span>
+                        </div>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Detected Location</span>
+                            <span id="extLocation" class="text-xs font-bold text-blue-600 block mt-1">Analyzing Region...</span>
                         </div>
                         <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs">
                             <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Assigned Severity</span>
@@ -288,49 +292,77 @@
             }
         });
 
-        uploadForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const file = imageInput.files[0];
-            if (!file) return;
+        // Replace your existing uploadForm event listener and showExtractionResult function:
+       uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const file = imageInput.files[0];
+    if (!file) return;
 
-            submitBtn.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
+    submitBtn.classList.add('hidden');
+    loadingSpinner.classList.remove('hidden');
 
-            const formData = new FormData();
-            formData.append('file', file);
+    const formData = new FormData();
+    formData.append('file', file);
 
-            try {
-                const response = await axios.post(`${API_BASE_URL}/api/classify/`, formData);
-                showExtractionResult(response.data.category, response.data.priority);
-            } catch (error) {
-                console.warn("Backend pipeline offline. Launching fallback mock presentation loop data sequence.");
-                setTimeout(() => {
-                    showExtractionResult("Structural Drainage Blockage", "High");
-                }, 1500);
-            }
-        });
+    // Sila semak jika browser menyokong dan peranti menghidupkan GPS
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                // Berjaya dapat GPS peranti! Masukkan ke dalam formData
+                formData.append('latitude', position.coords.latitude);
+                formData.append('longitude', position.coords.longitude);
+                
+                // Hantar ke backend
+                await sendDataToBackend(formData);
+            },
+            async (error) => {
+                console.warn("GPS dihidupkan tetapi akses disekat/gagal:", error.message);
+                // Teruskan hantar tanpa GPS (Backend akan auto-fallback guna Vision AI)
+                await sendDataToBackend(formData);
+            },
+            { enableHighAccuracy: true, timeout: 5000 }
+        );
+    } else {
+        // Browser terlalu lama, tiada fungsi Geolocation
+        await sendDataToBackend(formData);
+    }
+});
 
-        function showExtractionResult(category, priority) {
+// Send data to Axios
+async function sendDataToBackend(formData) {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/api/classify/`, formData);
+        showExtractionResult(response.data.category, response.data.priority, response.data.location);
+    } catch (error) {
+        console.error("Ralat komunikasi backend:", error);
+        alert("Ops! Panggilan API tersangkut. Sila semak terminal!");
+        submitBtn.classList.remove('hidden');
+        loadingSpinner.classList.add('hidden');
+    }
+}
+
+        function showExtractionResult(category, priority, location) {
             submitBtn.classList.remove('hidden');
             loadingSpinner.classList.add('hidden');
-            
+    
             document.getElementById('extCategory').innerText = category;
+            document.getElementById('extLocation').innerText = location || "Selangor Hub"; // Dynamically update location text
+    
             const extSeverity = document.getElementById('extSeverity');
             extSeverity.innerText = `${priority} Priority`;
-            
-            // Added 'Low Severity' layout processing conditions here!
-            if (priority === 'High') {
+    
+        if (priority === 'High') {
                 extSeverity.className = "text-xs font-extrabold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
-            } else if (priority === 'Medium') {
+        } else if (priority === 'Medium') {
                 extSeverity.className = "text-xs font-extrabold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
-            } else if (priority === 'Low') {
+        } else if (priority === 'Low') {
                 extSeverity.className = "text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
-            } else {
+        } else {
                 extSeverity.className = "text-xs font-extrabold text-slate-600 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
-            }
-            
-            extractionBox.classList.remove('hidden');
-            fetchDashboardData(); 
+        }
+    
+        extractionBox.classList.remove('hidden');
+        fetchDashboardData(); // Automatically updates screen 1 table matrix instantly!
         }
 
         // 3. CORE MATRIX COMPILATION ENGINE
