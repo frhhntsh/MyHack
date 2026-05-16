@@ -3,175 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecosystem Automation Hub</title>
+    <title>EcoLink AI — Ecosystem Automation Hub</title>
+    <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Google Fonts for elevated typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+        }
         .active-tab {
-            border-bottom: 3px solid #2563eb;
+            background: rgba(37, 99, 235, 0.06);
             color: #2563eb;
-            font-weight: 600;
+            border-color: #2563eb;
+        }
+        /* Custom smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen flex flex-col antialiased">
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 px-6 py-3 flex flex-col sm:flex-row justify-between items-center shadow-xs gap-4">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 text-white p-2 rounded-xl font-bold text-xl shadow-md shadow-blue-100 flex items-center justify-center w-10 h-10">
-                🤖
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50 px-6 py-4 grid grid-cols-1 md:grid-cols-3 items-center gap-4 shadow-xs">
+        <!-- Left: Logo -->
+        <div class="flex items-center gap-3.5 justify-center md:justify-start">
+            <div class="bg-linear-to-tr from-blue-600 to-indigo-600 text-white p-2.5 rounded-2xl shadow-lg shadow-blue-500/20 flex items-center justify-center w-11 h-11 transform transition hover:rotate-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             </div>
             <div>
-                <span class="font-bold text-xl tracking-tight text-slate-900 block">EcoLink <span class="text-blue-600">AI</span></span>
-                <span class="text-xs text-slate-400 font-medium block">GDG Hackathon Edition</span>
+                <span class="font-extrabold text-xl tracking-tight text-slate-900 block">EcoLink <span class="text-blue-600 font-black">AI</span></span>
             </div>
         </div>
 
-        <div class="flex gap-1 sm:gap-6 text-sm font-medium text-slate-500">
-            <button onclick="switchScreen('screen1')" id="tab-screen1" class="px-3 py-2 active-tab transition hover:text-blue-600 cursor-pointer">📊 Admin Dashboard</button>
-            <button onclick="switchScreen('screen2')" id="tab-screen2" class="px-3 py-2 transition hover:text-blue-600 cursor-pointer">📸 Citizen Snap & Report</button>
-            <button onclick="switchScreen('screen3')" id="tab-screen3" class="px-3 py-2 transition hover:text-blue-600 cursor-pointer">💬 AI Eco-Assistant</button>
+        <!-- Center: Segmented Control Navigation Tabs (Improvised Premium Icons) -->
+        <div class="bg-slate-100/80 p-1 rounded-xl flex gap-1 border border-slate-200/40 w-full justify-center mx-auto">
+            <button onclick="switchScreen('screen1')" id="tab-screen1" class="flex-1 px-4 py-2 rounded-lg text-xs font-semibold text-slate-600 active-tab transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group">
+                <svg class="w-4 h-4 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+                </svg>
+                Admin Dashboard
+            </button>
+            <button onclick="switchScreen('screen2')" id="tab-screen2" class="flex-1 px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group">
+                <svg class="w-4 h-4 transition-transform duration-200 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                </svg>
+                Citizen Hub
+            </button>
+            <button onclick="switchScreen('screen3')" id="tab-screen3" class="flex-1 px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group">
+                <svg class="w-4 h-4 text-slate-500 transition-all duration-300 group-hover:text-blue-600 shrink-0 self-center" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" class="transition-transform duration-300 group-hover:scale-95 origin-center" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor" class="animate-pulse" />
+                </svg>
+                <span class="self-center">AI Eco-Assistant</span>
+            </button>
         </div>
 
-        <div class="text-xs bg-slate-100 text-slate-600 font-semibold px-3 py-1.5 rounded-full border border-slate-200">
-            Frontend Team: Aleeya & Ain
-        </div>
+        <!-- Right: Empty spacer to balance the grid layout perfectly -->
+        <div class="hidden md:block"></div>
     </nav>
 
-    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 flex-grow">
+    <!-- MAIN APP WRAPPER -->
+    <main class="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-grow flex flex-col justify-start">
 
-        <section id="screen1" class="space-y-6">
-            <div class="flex justify-between items-center">
+        <!-- SCREEN 1: MUNICIPAL DASHBOARD -->
+        <section id="screen1" class="space-y-6 block animate-fadeIn">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Municipal Command Center</h1>
-                    <p class="text-sm text-slate-500">Real-time automated ecosystem linkages and infrastructure routing logic.</p>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl">Municipal Command Center</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Real-time ecosystem automated orchestration framework.</p>
                 </div>
-                <button onclick="fetchDashboardData()" class="bg-white border border-slate-200 hover:bg-slate-50 p-2.5 rounded-xl shadow-xs transition text-slate-600 font-medium flex items-center gap-2 cursor-pointer text-sm">
-                    🔄 Refresh Matrix
+                <!-- Fixed Straight SVG Refresh Icon -->
+                <button onclick="fetchDashboardData()" class="bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 p-2.5 rounded-xl shadow-xs transition-all duration-200 text-slate-700 font-semibold flex items-center gap-2 cursor-pointer text-xs group">
+                    <svg class="w-4 h-4 text-slate-500 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path>
+                    </svg>
+                    Refresh Linkages Matrix
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Issues Processed</span>
-                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="kpi-total">348</h3>
-                    <span class="text-xs text-emerald-600 font-medium block mt-2">↑ 12% from last cohort</span>
+            <!-- KPI Summary Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-xs hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Issues Processed</span>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="kpi-total">348</h3>
+                        <span class="text-xs text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
+                            ↑ 12%
+                        </span>
+                    </div>
+                    <span class="text-xs text-slate-400 block mt-2">Historical system throughput</span>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Automated Linkages</span>
-                    <h3 class="text-3xl font-extrabold text-blue-600 mt-1" id="kpi-active">124</h3>
-                    <span class="text-xs text-slate-500 font-medium block mt-2">Zero human verification delays</span>
+                
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-xs hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 bg-blue-500/5 w-24 h-24 rounded-full -mr-5 -mt-5"></div>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Active Automated Linkages</span>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <h3 class="text-3xl font-black text-blue-600 tracking-tight" id="kpi-active">124</h3>
+                        <span class="animate-pulse flex h-2 w-2 relative top-[-10px]"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
+                    </div>
+                    <span class="text-xs text-slate-500 font-medium block mt-2">Zero operational dispatch delays</span>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Avg AI Resolution Speed</span>
-                    <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="kpi-speed">1.4s</h3>
-                    <span class="text-xs text-indigo-600 font-medium block mt-2">Powered by Gemini Optimization</span>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-xs hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Avg AI Resolution Speed</span>
+                    <h3 class="text-3xl font-black text-indigo-600 tracking-tight mt-1" id="kpi-speed">1.4s</h3>
+                    <span class="text-xs text-slate-400 font-medium block mt-2">Powered by Gemini-1.5-Flash</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h2 class="font-bold text-slate-900 text-base">Programmable Relationship Linkages</h2>
-                    <span class="text-xs bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md">Live AI Brokerage</span>
+            <!-- Main Relationship Linkages Table Card -->
+            <div class="bg-white rounded-2xl border border-slate-200/70 shadow-xs overflow-hidden">
+                <div class="px-6 py-4.5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <div>
+                        <h2 class="font-extrabold text-slate-900 text-sm tracking-tight">Programmable Relationship Linkages</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">First-class relational entities mapped automatically by cognitive infrastructure models.</p>
+                    </div>
+                    <span class="text-[10px] bg-blue-50 text-blue-700 font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider border border-blue-100">Live AI Routing Engine</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse whitespace-nowrap md:whitespace-normal">
                         <thead>
-                            <tr class="bg-slate-50 text-slate-400 font-semibold text-xs uppercase tracking-wider border-b border-slate-100">
-                                <th class="px-6 py-3.5">Report details</th>
-                                <th class="px-6 py-3.5">Location/Area</th>
-                                <th class="px-6 py-3.5">Severity Level</th>
-                                <th class="px-6 py-3.5">AI Routing Reasoning (First-Class Logic)</th>
+                            <tr class="bg-slate-50 text-slate-400 font-bold text-[11px] uppercase tracking-wider border-b border-slate-200/60">
+                                <th class="px-6 py-4">Report Details</th>
+                                <th class="px-6 py-4">Location/Area</th>
+                                <th class="px-6 py-4">Severity State</th>
+                                <th class="px-6 py-4">AI Routing Reasoning (First-Class Logic)</th>
                             </tr>
                         </thead>
-                        <tbody id="linkageTableBody" class="divide-y divide-slate-100 text-sm">
-                            </tbody>
+                        <tbody id="linkageTableBody" class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+                            <!-- Injected dynamically via runtime JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-
-        <section id="screen2" class="hidden max-w-xl mx-auto space-y-6">
+        <!-- SCREEN 2: CITIZEN REPORTING SIMULATOR -->
+        <section id="screen2" class="hidden max-w-xl mx-auto w-full space-y-6 animate-fadeIn">
             <div class="text-center">
-                <h1 class="text-2xl font-bold text-slate-900">Citizen Reporting Hub</h1>
-                <p class="text-sm text-slate-500">Simulate a real-world smartphone camera ecosystem input.</p>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Citizen Reporting Portal</h1>
+                <p class="text-sm text-slate-500 mt-1">Simulate edge node ecosystem intake through computer vision pipelines.</p>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                <form id="uploadForm" class="space-y-4">
-                    <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center hover:border-blue-500 transition bg-slate-50/50 relative cursor-pointer min-h-56">
-                        <input type="file" id="imageInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" required />
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-xs space-y-5">
+                <form id="uploadForm" class="space-y-5">
+                    <div class="border-2 border-dashed border-slate-200 hover:border-blue-500/70 rounded-2xl p-6 flex flex-col items-center justify-center transition-all duration-200 bg-slate-50/50 relative min-h-60 group">
+                        <input type="file" id="imageInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" required />
                         
-                        <div id="uploadPrompt" class="text-center space-y-2">
-                            <span class="text-3xl">📸</span>
-                            <p class="text-sm font-semibold text-slate-700">Tap to capture or upload community issue image</p>
-                            <p class="text-xs text-slate-400">Simulate local structural breakdowns</p>
+                        <div id="uploadPrompt" class="text-center space-y-3 p-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-slate-700">Drop regional image or click to choose file</p>
+                                <p class="text-[11px] text-slate-400">Simulate localized architectural anomalies or breakdowns</p>
+                            </div>
                         </div>
-                        <img id="imagePreview" class="hidden max-h-56 object-contain rounded-xl shadow-xs" alt="Preview" />
+                        <img id="imagePreview" class="hidden max-h-56 w-full object-contain rounded-xl shadow-xs border border-slate-100" alt="Intake Matrix Target Preview" />
                     </div>
 
-                    <button type="submit" id="submitBtn" class="w-full py-3 px-4 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition shadow-md shadow-blue-100 cursor-pointer text-sm">
-                        Submit Report to AI Engine
+                    <button type="submit" id="submitBtn" class="w-full py-3 px-4 rounded-xl text-white text-xs font-bold bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/10 transition-all duration-200 cursor-pointer transform active:scale-[0.99]">
+                        Dispatch To Ecosystem AI Parser
                     </button>
                 </form>
 
-                <div id="loadingSpinner" class="hidden py-4 text-center space-y-3">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-                    <p class="text-xs font-semibold text-blue-600 animate-pulse">Gemini AI analyzing ecosystem impact...</p>
+                <!-- Processing State Engine Display -->
+                <div id="loadingSpinner" class="hidden py-6 text-center space-y-3 bg-blue-50/40 rounded-xl border border-blue-100/50 animate-pulse">
+                    <div class="inline-block animate-spin rounded-full h-7 w-7 border-3 border-blue-600 border-t-transparent"></div>
+                    <p class="text-[11px] font-bold text-blue-700 tracking-wide uppercase">Gemini Neural Matrix Analyzing Ecosystem Linkage Potentials...</p>
                 </div>
 
-                <div id="extractionBox" class="hidden p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                        ✨ Automated Classification Profile
+                <!-- Automated Profile Result Box -->
+                <div id="extractionBox" class="hidden p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-3.5 animate-slideUp">
+                    <h3 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        Structural Classification Matrix Profile
                     </h3>
-                    <div class="grid grid-cols-2 gap-4 text-xs">
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                            <span class="text-slate-400 font-medium block">Extracted Category</span>
-                            <span id="extCategory" class="text-sm font-bold text-slate-800 block mt-0.5">Infrastructure Damage</span>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Extracted Category</span>
+                            <span id="extCategory" class="text-xs font-bold text-slate-800 block mt-1">Structural Infrastructure Fault</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                            <span class="text-slate-400 font-medium block">Assigned Severity</span>
-                            <span id="extSeverity" class="inline-block font-bold mt-1"></span>
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Assigned Severity</span>
+                            <span id="extSeverity" class="inline-block font-bold mt-1 text-xs"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-
-        <section id="screen3" class="hidden max-w-2xl mx-auto flex flex-col h-[75vh] bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">🌱</div>
-                <div>
-                    <h2 class="font-bold text-slate-900 text-sm">Neighborhood Eco-Assistant</h2>
-                    <span class="text-xs text-emerald-600 flex items-center gap-1 font-medium">● Online Expert System</span>
+        <!-- SCREEN 3: AI ECO-ASSISTANT CHAT HUB -->
+        <section id="screen3" class="hidden max-w-2xl mx-auto w-full flex flex-col h-[70vh] bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden animate-fadeIn">
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-base shadow-sm shadow-emerald-500/10">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-900 text-sm tracking-tight">Neighborhood Ecosystem Assistant</h2>
+                        <span class="text-[10px] text-emerald-600 flex items-center gap-1 font-bold uppercase tracking-wider">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Contextual Expert System Active
+                        </span>
+                    </div>
                 </div>
+                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mono-text">V1.0.4</span>
             </div>
 
-            <div id="chatWindow" class="flex-grow p-6 overflow-y-auto space-y-4 text-sm">
-                <div class="flex items-start gap-3 max-w-[85%]">
-                    <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
-                    <div class="bg-slate-100 text-slate-800 p-3.5 rounded-2xl rounded-tl-xs">
-                        Hello! I am your neighborhood ecosystem assistant. Ask me anything about local reports, tracking linkages, or environmental compliance rules!
+            <!-- Scrollable chat message pane -->
+            <div id="chatWindow" class="flex-grow p-5 overflow-y-auto space-y-4 bg-slate-50/30">
+                <div class="flex items-start gap-3 max-w-[85%] animate-slideUp">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] shrink-0 font-bold uppercase tracking-wider shadow-2xs">AI</div>
+                    <div class="bg-white border border-slate-100 text-slate-700 p-3.5 rounded-2xl rounded-tl-xs text-xs font-medium shadow-3xs leading-relaxed">
+                        System pipeline operational. Query me details surrounding platform automation rules, active structural linkages, or historical environmental data caches.
                     </div>
                 </div>
             </div>
 
-            <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+            <!-- Message processing input field box -->
+            <div class="p-3.5 border-t border-slate-100 bg-white">
                 <form id="chatForm" class="flex gap-2">
-                    <input type="text" id="chatInput" placeholder="Ask about active system logic or report states..." class="flex-grow px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 text-sm shadow-2xs" required />
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-xl transition text-sm cursor-pointer shadow-xs">Send</button>
+                    <input type="text" id="chatInput" placeholder="Inquire regarding pipeline automation logic..." class="flex-grow px-4 py-2.5 bg-slate-50/80 border border-slate-200/80 rounded-xl focus:outline-none focus:border-blue-500 text-xs font-medium transition shadow-3xs placeholder:text-slate-400" required />
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl transition-colors duration-150 text-xs cursor-pointer shadow-xs transform active:scale-98 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
                 </form>
             </div>
         </section>
 
     </main>
 
+    <!-- CORE EXECUTION SYSTEM & CONTROLLERS -->
     <script>
         const API_BASE_URL = 'http://127.0.0.1:8000';
 
-        // 1. SCREEN SWITCHING ROUTINE
+        // 1. SCREEN CONTROLLER
         function switchScreen(screenId) {
             ['screen1', 'screen2', 'screen3'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -181,7 +269,7 @@
             document.getElementById(`tab-${screenId}`).classList.add('active-tab');
         }
 
-        // 2. SCREEN 2: CAMERA UPLOAD HANDLING & LOADING SIMULATION
+        // 2. IMAGE UPLOAD WORKFLOW & DEMO SIMULATION FALLBACK
         const imageInput = document.getElementById('imageInput');
         const imagePreview = document.getElementById('imagePreview');
         const uploadPrompt = document.getElementById('uploadPrompt');
@@ -196,7 +284,7 @@
                 imagePreview.src = URL.createObjectURL(file);
                 imagePreview.classList.remove('hidden');
                 uploadPrompt.classList.add('hidden');
-                extractionBox.classList.add('hidden'); // Clear previous run
+                extractionBox.classList.add('hidden');
             }
         });
 
@@ -205,7 +293,6 @@
             const file = imageInput.files[0];
             if (!file) return;
 
-            // Trigger Google/GDG Vibe Loading System
             submitBtn.classList.add('hidden');
             loadingSpinner.classList.remove('hidden');
 
@@ -216,8 +303,7 @@
                 const response = await axios.post(`${API_BASE_URL}/api/classify/`, formData);
                 showExtractionResult(response.data.category, response.data.priority);
             } catch (error) {
-                console.warn("Backend offline, running seamless mock presentation response loop.");
-                // Simulating response payload
+                console.warn("Backend pipeline offline. Launching fallback mock presentation loop data sequence.");
                 setTimeout(() => {
                     showExtractionResult("Structural Drainage Blockage", "High");
                 }, 1500);
@@ -232,67 +318,72 @@
             const extSeverity = document.getElementById('extSeverity');
             extSeverity.innerText = `${priority} Priority`;
             
-            // Context badge colors
+            // Added 'Low Severity' layout processing conditions here!
             if (priority === 'High') {
-                extSeverity.className = "text-sm font-bold text-red-600 block mt-0.5";
+                extSeverity.className = "text-xs font-extrabold text-red-600 bg-red-50 border border-red-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
             } else if (priority === 'Medium') {
-                extSeverity.className = "text-sm font-bold text-yellow-600 block mt-0.5";
+                extSeverity.className = "text-xs font-extrabold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
+            } else if (priority === 'Low') {
+                extSeverity.className = "text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
             } else {
-                extSeverity.className = "text-sm font-bold text-green-600 block mt-0.5";
+                extSeverity.className = "text-xs font-extrabold text-slate-600 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider";
             }
             
             extractionBox.classList.remove('hidden');
-            fetchDashboardData(); // Update admin counts
+            fetchDashboardData(); 
         }
 
-        // 3. SCREEN 1 & SCREEN 2: FETCH LINKAGE DATA & INJECT BADGES
+        // 3. CORE MATRIX COMPILATION ENGINE
         async function fetchDashboardData() {
             const tbody = document.getElementById('linkageTableBody');
-            tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-slate-400 text-xs italic">Syncing live linkages matrix...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-slate-400 text-xs italic font-medium tracking-wide">Synchronizing live operational linkage state matrices...</td></tr>`;
 
             let linkages = [];
             try {
                 const response = await axios.get(`${API_BASE_URL}/dashboard/issues/`);
                 linkages = response.data;
             } catch (error) {
-                // Highly visual presentation fallback data representing the project guidelines
                 linkages = [
-                    { title: "Clogged Major Monsoon Drain", area: "Selangor Hub", priority: "High", reasoning: "AI Engine linked to Emergency Drainage Team. Bypassed manual routing queues to prevent localized flash flood risk." },
-                    { title: "Illegal Rubbish Accumulation", area: "Kuala Lumpur Central", priority: "Medium", reasoning: "AI flagged structural environmental mismatch. Scheduled for waste disposal cohort unit pickup within 24 hours." },
-                    { title: "Minor Damaged Pathway Signage", area: "Cyberjaya West", priority: "Low", reasoning: "Low risk factor. Logged into historical long-term ecosystem maintenance cycle automatically." }
+                    { title: "Clogged Major Monsoon Drain", area: "Selangor Hub, Zone 4", priority: "High", reasoning: "Ecosystem AI routed linkage autonomously to Emergency Hydro-Vacuum Engineering Unit. Safely bypassed conventional triage loops based on historic regional flash risk vectors." },
+                    { title: "Bulk Waste Rubbish Accumulation", area: "Kuala Lumpur Central, Section A", priority: "Medium", reasoning: "Identified logistical pattern matching infrastructure errors. Enqueued allocation matrices to dedicated waste fleet units slated for remediation within 18 hours." },
+                    { title: "Minor Signage Structural Fault", area: "Cyberjaya West Sector", priority: "Low", reasoning: "Non-critical environmental structural noise anomalies logged directly into automated secondary routine infrastructure sprints without supervisor overhead." }
                 ];
             }
 
             tbody.innerHTML = '';
             linkages.forEach(item => {
-                let badgeStyle = "bg-green-50 text-green-700 border-green-200";
-                let dotStyle = "bg-green-500";
+                let badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-100/80";
+                let dotStyle = "bg-emerald-500";
                 
+                // Processed explicit matching configurations for High, Medium, and Low variations
                 if (item.priority === 'High') {
-                    badgeStyle = "bg-red-50 text-red-700 border-red-200";
+                    badgeStyle = "bg-red-50 text-red-700 border-red-100/80 shadow-2xs shadow-red-500/5";
                     dotStyle = "bg-red-500";
                 } else if (item.priority === 'Medium') {
-                    badgeStyle = "bg-yellow-50 text-yellow-700 border-yellow-200";
-                    dotStyle = "bg-yellow-500";
+                    badgeStyle = "bg-amber-50 text-amber-700 border-amber-100/80";
+                    dotStyle = "bg-amber-500";
+                } else if (item.priority === 'Low') {
+                    badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-100/80";
+                    dotStyle = "bg-emerald-500";
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/80 transition font-medium";
+                tr.className = "hover:bg-slate-50/60 transition-all duration-150 font-medium group text-slate-700";
                 tr.innerHTML = `
-                    <td class="px-6 py-4 font-semibold text-slate-900">${item.title}</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs">${item.area}</td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeStyle}">
+                    <td class="px-6 py-4.5 font-bold text-slate-900 group-hover:text-blue-600 transition-colors">${item.title}</td>
+                    <td class="px-6 py-4.5 text-slate-500 text-xs font-semibold">${item.area}</td>
+                    <td class="px-6 py-4.5">
+                        <span class="inline-flex items-center text-[10px] font-extrabold px-2.5 py-1 rounded-full border tracking-wider uppercase ${badgeStyle}">
                             <span class="w-1.5 h-1.5 rounded-full mr-1.5 ${dotStyle}"></span>${item.priority}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-xs text-blue-950 font-mono bg-blue-50/30 max-w-xs md:max-w-md">${item.reasoning}</td>
+                    <td class="px-6 py-4.5 text-[11px] text-slate-600 max-w-sm leading-relaxed"><div class="bg-slate-50/80 border border-slate-100 rounded-lg p-2.5 mono-text text-[10.5px] leading-relaxed text-blue-950/90">${item.reasoning}</div></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // 4. SCREEN 3: AI ECO-ASSISTANT CONVERSATIONAL USER INTERFACE
+        // 4. CHAT ASSISTANT FRONTEND EVENT ROUTINE
         const chatForm = document.getElementById('chatForm');
         const chatInput = document.getElementById('chatInput');
         const chatWindow = document.getElementById('chatWindow');
@@ -302,7 +393,6 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // Render User Prompt Bubble
             renderChatBubble(text, true);
             chatInput.value = '';
 
@@ -310,36 +400,37 @@
                 const response = await axios.post(`${API_BASE_URL}/api/chat/`, { message: text });
                 renderChatBubble(response.data.reply, false);
             } catch (error) {
-                // Mock smart contextual responses based on what judges might ask
                 setTimeout(() => {
-                    let fallbackReply = "Our platform treats relationships as programmable entities. By tracking historical coordination logs, we stop environmental data from dropping between cohorts.";
+                    let fallbackReply = "The runtime framework handles active actor relationships as first-class programmatic models. By capturing historical linkages across cohorts, we eliminate systemic data loss cascades.";
                     if(text.toLowerCase().includes('priority') || text.toLowerCase().includes('high')) {
-                        fallbackReply = "Correct! The system evaluates severity via computer vision input metrics and triggers higher automation thresholds for severe blockages to ensure instant action.";
+                        fallbackReply = "Affirmative. Edge parsing mechanisms assess emergency thresholds instantly through image categorization and tag high severity flags directly into systemic automation queues, removing manual administrative triage delays.";
                     }
                     renderChatBubble(fallbackReply, false);
-                }, 800);
+                }, 600);
             }
         });
 
         function renderChatBubble(msg, isUser) {
             const wrapper = document.createElement('div');
-            wrapper.className = isUser ? "flex items-start gap-3 max-w-[85%] ml-auto justify-end flex-row-reverse" : "flex items-start gap-3 max-w-[85%]";
+            // Guna flex-row untuk AI (avatar kiri, text kanan) dan flex-row-reverse untuk User (text kiri, avatar kanan)
+            wrapper.className = isUser ? "flex flex-row-reverse items-start gap-3 max-w-[85%] ml-auto justify-start animate-slideUp" : "flex flex-row items-start gap-3 max-w-[85%] animate-slideUp";
             
             const avatar = document.createElement('div');
-            avatar.className = isUser ? "w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs" : "w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0";
-            avatar.innerText = isUser ? "ME" : "AI";
+            avatar.className = isUser ? "w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 tracking-wider shadow-sm shadow-blue-500/10" : "w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold shrink-0 tracking-wider shadow-2xs";
+            avatar.innerText = isUser ? "USR" : "AI";
 
             const body = document.createElement('div');
-            body.className = isUser ? "bg-blue-600 text-white p-3.5 rounded-2xl rounded-tr-xs font-medium" : "bg-slate-100 text-slate-800 p-3.5 rounded-2xl rounded-tl-xs font-medium shadow-2xs";
+            // Rounded corners disuaikan ikut siapa yang hantar mesej
+            body.className = isUser ? "bg-blue-600 text-white p-3.5 rounded-2xl rounded-tr-xs text-xs font-medium shadow-sm leading-relaxed text-left" : "bg-white border border-slate-100 text-slate-700 p-3.5 rounded-2xl rounded-tl-xs text-xs font-medium shadow-3xs leading-relaxed text-left";
             body.innerText = msg;
 
             wrapper.appendChild(avatar);
             wrapper.appendChild(body);
             chatWindow.appendChild(wrapper);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to view response
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Initialize table dataset on run runtime
+        // INITIALIZE COMPONENT LIFE-CYCLE
         fetchDashboardData();
     </script>
 </body>
